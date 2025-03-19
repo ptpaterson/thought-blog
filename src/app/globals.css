@@ -1,0 +1,248 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+/* 
+ * Use Tailwind's built-in color variables directly
+ * Rule: Use Tailwind CSS for styling with a utility-first approach
+ */
+@theme {
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+}
+
+@layer base {
+  :root {
+    /* Custom colors */
+    --color-indigo-990: oklch(0.1 0.05 291.089);
+    --color-indigo-10: oklch(0.99 0.01 291.089);
+
+    /* Use existing Tailwind swatches where it makes sense */
+
+    /* Background and foreground */
+    --surface-1: var(--color-indigo-990);
+    --surface-2: var(--color-white);
+    --foreground: var(--color-indigo-990);
+    --card: var(--color-white);
+    --card-foreground: var(--color-indigo-950);
+    --popover: var(--color-white);
+    --popover-foreground: var(--color-indigo-950);
+
+    /* Primary: indigo */
+    --primary: var(--color-indigo-600);
+    --primary-foreground: var(--color-white);
+
+    /* Secondary: indigo */
+    --secondary: var(--color-indigo-200);
+    --secondary-foreground: var(--color-indigo-900);
+
+    /* Muted: Zinc */
+    --muted: var(--color-zinc-100);
+    --muted-foreground: var(--color-zinc-500);
+
+    /* Accent: Amber */
+    --accent: var(--color-amber-200);
+    --accent-foreground: var(--color-indigo-900);
+
+    /* Destructive: Red */
+    --destructive: var(--color-red-500);
+    --destructive-foreground: var(--color-white);
+
+    /* Borders and Input: indigo */
+    --border: var(--color-indigo-200);
+    --input: var(--color-indigo-200);
+
+    /* Ring: indigo */
+    --ring: var(--color-indigo-500);
+
+    /* Border Radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Background and foreground */
+    --surface-1: var(--color-slate-100);
+    --surface-2: var(--color-slate-900);
+    --foreground: var(--color-slate-100);
+    --card: var(--color-indigo-950);
+    --card-foreground: var(--color-white);
+    --popover: var(--color-indigo-950);
+    --popover-foreground: var(--color-white);
+
+    /* Primary: indigo (lighter in dark mode) */
+    --primary: var(--color-indigo-400);
+    --primary-foreground: var(--color-indigo-900);
+
+    /* Secondary: indigo (darker in dark mode) */
+    --secondary: var(--color-indigo-800);
+    --secondary-foreground: var(--color-white);
+
+    /* Muted: Zinc (darker in dark mode) */
+    --muted: var(--color-zinc-800);
+    --muted-foreground: var(--color-zinc-400);
+
+    /* Accent: Amber (darker in dark mode) */
+    --accent: var(--color-amber-700);
+    --accent-foreground: var(--color-white);
+
+    /* Destructive: Red (darker in dark mode) */
+    --destructive: var(--color-red-900);
+    --destructive-foreground: var(--color-white);
+
+    /* Borders and Input: slate (darker in dark mode) */
+    --border: var(--color-slate-800);
+    --input: var(--color-slate-800);
+
+    /* Ring: indigo (lighter in dark mode) */
+    --ring: var(--color-indigo-400);
+  }
+
+  body {
+    @apply bg-surface-2 text-foreground;
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  article.prose {
+    /* Color overrides */
+    --tw-prose-body: var(--foreground);
+    --tw-prose-headings: var(--foreground);
+    --tw-prose-lead: var(--secondary);
+    --tw-prose-links: var(--primary);
+    --tw-prose-bold: var(--primary);
+    --tw-prose-counters: var(--primary);
+    --tw-prose-bullets: var(--primary);
+    --tw-prose-hr: var(--secondary);
+    --tw-prose-quotes: var(--primary);
+    --tw-prose-quote-borders: var(--secondary);
+    --tw-prose-captions: var(--secondary);
+    --tw-prose-kbd: var(--primary);
+    --tw-prose-code: var(--primary);
+    --tw-prose-pre-code: var(--secondary);
+    --tw-prose-th-borders: var(--secondary);
+    --tw-prose-td-borders: var(--secondary);
+
+    /* Don't use prose-invert or it will break colors.
+      Using vars will already allow dark mode colors to work. */
+
+    /* Other overrides */
+    max-width: 100%;
+
+    /* Styling for headers */
+    /* underline h2 */
+    h2 {
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* Apply styling for anchor links */
+    .anchor,
+    h2 .anchor,
+    h3 .anchor,
+    h4 .anchor,
+    h5 .anchor,
+    h6 .anchor {
+      position: absolute;
+      text-decoration: none;
+      width: 1.75ex;
+      margin-left: -1.5ex;
+      visibility: hidden;
+      font-size: 0.8em;
+      font-weight: 400;
+      padding-top: 0.05em;
+    }
+
+    h1 .anchor::before,
+    h2 .anchor::before,
+    h3 .anchor::before,
+    h4 .anchor::before,
+    h5 .anchor::before,
+    h6 .anchor::before {
+      content: '\00a7';
+    }
+
+    h1:hover .anchor,
+    h2:hover .anchor,
+    h3:hover .anchor,
+    h4:hover .anchor,
+    h5:hover .anchor,
+    h6:hover .anchor {
+      visibility: visible;
+    }
+
+    blockquote.callout {
+      p {
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+
+        &:before {
+          content: none;
+        }
+
+        &:after {
+          content: none;
+        }
+      }
+    }
+
+    code {
+      @apply rounded-sm px-1.5 py-1 font-normal;
+
+      &:after {
+        content: none;
+      }
+
+      &:before {
+        content: none;
+      }
+    }
+
+    [data-rehype-pretty-code-figure] {
+      @apply rounded-md bg-slate-950;
+
+      figcaption {
+        @apply text-muted-foreground px-2 py-1;
+      }
+    }
+
+    [data-highlighted-line] {
+      @apply bg-white/10;
+
+      &[data-highlighted-line-id='add'] {
+        @apply relative bg-emerald-600/15;
+
+        &:before {
+          @apply absolute -left-[3px] border-l-3 border-l-emerald-600 text-emerald-600;
+          content: ' ';
+        }
+      }
+
+      &[data-highlighted-line-id='remove'] {
+        @apply relative bg-red-700/15;
+
+        &:before {
+          @apply absolute -left-[3px] border-l-3 border-l-red-700 text-red-700;
+          content: ' ';
+        }
+      }
+    }
+  }
+}

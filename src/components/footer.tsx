@@ -24,7 +24,16 @@ export default function Footer() {
         </Link>
       </div>
       <div className='text-muted-foreground p-1 text-center'>
-        <p>Paul Paterson • © {currentYear}</p>
+        <p>
+          Paul Paterson • © {currentYear} •{' '}
+          <a
+            href='https://github.com/ptpaterson/thought-blog'
+            className='hover:text-foreground underline'
+            target='_blank'
+          >
+            This site is open source!
+          </a>
+        </p>
       </div>
     </footer>
   )

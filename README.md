@@ -4,6 +4,8 @@ I'm Paul Paterson, a software engineer, dad, husband, and fixer of things! I am 
 
 This site is built with [Next.js](https://nextjs.org) and [MDX](https://mdxjs.com/)
 
+See it live at [paul.patersons.us](https://paul.patersons.us)
+
 ## Development
 
 Clone the repo and start the development server. Turbo pack is current not compatible with this app.

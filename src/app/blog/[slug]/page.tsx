@@ -83,10 +83,9 @@ export async function generateMetadata({
 
 export async function generateStaticParams() {
   const blogPosts = await listBlogPosts()
-  const blogStaticParams = blogPosts.map((post) => ({
+  return blogPosts.map((post) => ({
     slug: post.slug,
   }))
-  return blogStaticParams
 }
 
 export const dynamicParams = false

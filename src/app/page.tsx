@@ -10,18 +10,18 @@ export default async function Home() {
     <div className='from-primary/10 via-surface-2 to-primary/10 h-full w-full bg-linear-160 px-6 py-12'>
       <div className='mx-auto max-w-[1024px] md:px-12'>
         {/* Hero Section */}
-        <section className='flex flex-col items-center gap-8 md:flex-row'>
-          <div className='md:w-1/2'>
-            <h1 className='mb-4 flex gap-2 text-4xl font-bold md:block md:text-5xl'>
-              <div>Hi, I&apos;m</div>{' '}
-              <div className='text-primary'>Paul Paterson</div>
+        <section className='grid grid-cols-1 items-center gap-8 md:grid-cols-2'>
+          <div>
+            <h1 className='mb-4 text-4xl font-bold md:text-5xl'>
+              <span>Hi, I&apos;m</span>{' '}
+              <span className='text-primary md:block'>Paul Paterson</span>
             </h1>
             <p className='mb-6 text-xl'>
               I am passionate about building things, whether it&apos;s with code
               or with my hands. Sometimes I write about it.
             </p>
           </div>
-          <div className='p-4'>
+          <div className='justify-self-center p-4 md:justify-self-end'>
             <Image
               src='/MeFace.jpg?height=250&width=250'
               alt='Profile'

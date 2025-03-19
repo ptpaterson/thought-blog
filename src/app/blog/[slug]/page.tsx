@@ -4,7 +4,7 @@ import type { Metadata } from 'next/types'
 
 import Share from '@/components/share'
 import Tag from '@/components/tag'
-import { getBlogPost, getBlogPostMetadata, listBlogPosts } from '@/lib/mdx'
+import { getBlogPost, listBlogPosts } from '@/lib/mdx'
 
 type BlogPageProps = { params: Promise<{ slug: string }> }
 

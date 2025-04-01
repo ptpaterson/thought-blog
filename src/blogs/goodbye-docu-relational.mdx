@@ -1,0 +1,131 @@
+export const metadata = {
+  title: 'Goodbye Document-Relational. Until we meet again.',
+  description:
+    'Fauna announced the sunsetting of its service. What went well, and what went... maybe not so well?',
+  date: '2025-04-01T12:00:00Z',
+  categories: ['Fauna', 'Databases'],
+  keywords: ['Fauna', 'Databases', 'FaunaDB', 'document-relational'],
+}
+
+<PreRamble>
+  The last several weeks have been _a lot_ for my family and I, and it's taken
+  me a while to put my thoughts together in a way that's productive for sharing.
+  I could get stuck in the weeds for hours on this one! But I will try to stay
+  focused on a few key points.
+</PreRamble>
+
+## Initial thoughts
+
+A couple of weeks ago, Fauna [announced](https://fauna.com/blog/the-future-of-fauna) that it is sunsetting its service. To say that I am disappointed is an understatement, and not just because it meant losing my job. I still believe that what we built was unique and one of the best operational databases available. So to lose that... I'm _super bummed_. I am hearted by the commitment to open sourcing Fauna technology, though. I hope that it delivers a real tool for the community to use and acts as a touch-stone to help push the whole database ecosystem forward.
+
+Fauna certainly isn't perfect, but I can't help but reflect on its unique perspective and what we can learn from it. To that end, I want to take some time to call out things that went well, that I want to see in other offers, and what perhaps could have been better.
+
+<CalloutNote>
+  What I am sharing is what has already been shared publiclyl; for example, in
+  the [architectural white
+  paper](https://fauna.com/resources/whitepapers/architectural-overview). I hope
+  that open-sourcing will shed some additional light on the inner workings.
+</CalloutNote>
+
+<CalloutTip>
+  I don't honestly know how long the Fauna blogs will be available, but I, for
+  one, have been capturing them into Obsidian notes using a browser plugin:
+  https://obsidian.md/clipper
+</CalloutTip>
+
+## "NoSQL" does not mean sacrificing consistency
+
+Fauna gave a rude gesture to everything folks have been saying about the CAP Theorem when it comes to NoSQL databases. Specifically _not_ the theorem itself (it still very much applies), but rather the assumption that "NoSQL" means "not consistent" and often "not relational". As [Fauna put it](https://fauna.com/blog/consistency-without-clocks-faunadb-transaction-protocol#background):
+
+> Fauna is more specifically a Relational NoSQL database platform. The term "NoSQL" refers only to the interface; Fauna currently supports an execution-transparent, procedural interface instead of declarative SQL.
+
+We'll come back to _"execution-transparent, procedural interface"_ in a moment!
+
+After years of workshopping it, Fauna finally settled on the term _document-relational_, or _"docu-relational"_. Whatever you call it, enabling relationships, joins and traversals on top of document storage is one of Fauna's most powerful features. It's also how I discovered and came love the product.
+
+My education and background are originally in Mechanical and Manufacturing engineering. In 2018, I was trying to build a database model for product design and lifecycle data. It's all very hierarchical, heterogeneous, and dynamic -- assemblies containing parts, which can be fabricated or purchased or modified, with multiple configurations and revisions in different approval states, all mixed up and composed together. That's not so simple to do in a traditional RDBMS.
+
+Fauna is still the only solution I have ever found that has let me (so easily) define a data model with dynamic components and relationships. My brain thinks about data very much in terms of the relationships between things. Having fallen down the rabbit hole that is functional programming and category theory, it's only gotten worse 😂 but I have some better words to describe things such as algebraic data types, something document stores can actually excel at.
+
+Another important note is that "flexible schema" doesn't need to mean "no schema". I would say it primarily means that it's easy to modify and evolve. To me, it also means supporting complex schemas through composition, inheritance, etc.
+
+<CalloutDigress>
+Have you ever worked with a game engine like Unity or [Bevy](https://bevyengine.org/)? Fauna makes me feel like I am working with an [ECS](https://en.wikipedia.org/wiki/Entity_component_system) in the cloud. Mmmmm... Okay, not _quite_, but the ability to handle dynamic schema gets it close. Maybe a mature column-family store would be a better comparison, but Fauna as an affordable, serverless option was a game changer for me.
+
+Regardless, the archytypal storage in Bevy's ECS is a beautiful thing. Being built in Rust, the Bevy ECS is naturally designed to schedule around systems with immutable reads and mutable writes. There's some absolutely fascinating overlap between the ECS, its dynamic storage, and database systems. It's something I have an outline to research further!
+
+</CalloutDigress>
+
+### On the "execution-transparent, procedural interface"
+
+Okay, so let's talk about FQL. FQL was one of Fauna's greatest strengths and also weaknesses.
+
+Fauna is a pay-for-what-you-use service. So in addition to needing fine control over transactions, you want to be able to predict how a query is executed and charged. With Fauna, there is no query planner. _YOU_ are the query planner. You tell the database exactly what data to fetch and how to do it. In some respects this is great. Do you need to implement efficient search by geo-location? Use FQL to [implement Uber's H3 algorithm](https://forums.fauna.com/t/index-binding-transform-value-n-times-uber-h3-algorithm/3341/2) within indexes and on the fly! On the other hand, _YOU_ are the query planner, and you need to know how to tell the database exactly what to do and how to do it! 😅
+
+As powerful as FQL is, it has been hard for a lot of folks to leverage it.
+
+- It is a new language and comes with a learning curve.
+- Folks have (clearly valid) concerns over vendor lock-in.
+- It's not always clear how to approach a specific query pattern, especially with non-trivial use cases.
+
+FQL stands out for its approach to providing powerful access to the database. If you have ever tried to perform a complex search or transaction consisting of 100s of lines of SQL, you understand the challenges of working with SQL as an interface for complex business logic. Yet it was hard to get on board the FQL train.
+
+I wonder about what an ideal approach would be. 🤔 I think anything new needs to support SQL and some semblance of query planning. There are several vendors offering enterprise-ready serverless support for PostgreSQL, and their customers seem to have the query planning determinism problem in check. But I keep coming back to this lower-level interface and how to avoid the issues we've seen. Can drivers be provided to support using existing programming languages as the interface? Maybe not ad-hoc queries in a transactional way, but as stored procedures? It's something I'll be thinking about.
+
+## Serverless and distributed by default
+
+Perhaps one of the clearest thing that stands out about Fauna is its protocol for consistent transactions over a distributed architecture, which was inspired by [Calvin](http://cs.yale.edu/homes/thomson/publications/calvin-sigmod12.pdf). Daniel Abadi and Matt Freels wrote an awesome article called [Consistency without Clocks](https://fauna.com/blog/consistency-without-clocks-faunadb-transaction-protocol), which is something worth checking out.
+
+Briefly: Fauna supports strictly serializable, externally consistent transactions, without relying on physical clock synchronization to maintain consistency, or placing any constraints on replica distance. As one example, I worked with one customer running a cluster with replicas in the US West, Ireland, and Japan.
+
+As far as I know, nothing using Calvin has gotten as big as Fauna, but doing a quick search shows there continues to be some chatter in recent years about Calvin (some positive, some negative). It would be foolish to claim Calvin is the answer to life the universe and everything, but it certainly pushed the boundaries of the state of the art. The original paper didn't have all of the answers. Fauna filled some of them in and made some of its own decisions, but there is plenty more to explore.
+
+Now, not everyone needs data replicated across the globe! 😜 But the scalability, availability, and durability granted from being _natively distributed_ is something I saw folks come for time and again. If serverless is, in part, about scaling down to zero, then with Fauna you didn't have to sacrifice multi-regionality to do so. This is no small deal. Many customers came to Fauna after grief they suffered trying to scale within the same platform after choosing whatever small-scale option they started with ("serverless" or not).
+
+## Separating compute from storage<span class="alt-heading">, or branching and time travel</span>
+
+I was recently reading articles from the folks at Neon about their [architectural decisions](https://neon.tech/blog/architecture-decisions-in-neon) and [separating compute from storage](https://neon.tech/blog/get-page-at-lsn). It had me thinking a lot about what Fauna does and doesn't do to separate things in this way.
+
+I already hit on the fact that Fauna is distributed by default. It has always separated the transaction log from the underlying storage. Yet it definitely takes more care to provision enough storage for active data than described by Neon's approach of putting older pages into object storage. Very interesting that. Fauna's storage is based on a custom fork of Cassandra, and Neon has some notes about LSM storage (used by Cassandra, for example),
+
+> The storage engine is inspired by and shares some similarities with Log-Structured Merge (LSM) trees... Despite the similarities, we could not find an LSM tree implementation that fit our needs directly.
+
+What I understand of Fauna's architecture (and there are a lot of assumptions here until open-sourcing can validate them), is that the keyspaces (essentially the "databases" for Cassandra) are pretty broadly used for a lot of data. Your databases and collections create a kind of "scope", or ID prefix, so your various collections' data, while sorted, all sit together (or their respective partitions anyway) in the same Sorted String Tables. And the temporal history is in there too. This is a tradeoff between managing many more files on disk and fewer complex ones.
+
+Neon also highlights its decision's impact on temporal features. Neon provides branching and time travel through its use of neatly ordered pages, whereas the temporal information in Fauna is deeply integrated with the active data. Regarding time travel, Fauna made it easy (and still efficient) to query at snapshots in time. Point-in-time recovery is also _technically_ possible with Fauna, but... it's painful implement as a user.
+
+We know that branching and time travel are useful and important tools for a lot of folks. I think any new service needs to consider these in its architectural decisions.
+
+One takeaway from this is that careful, intentional separation of concerns can enable the pluggability of different systems. PostgreSQL is awesome for that when you look at the success of something like [pgvector](https://github.com/pgvector/pgvector) but also clearly [lacking when you consider storage](https://www.cs.cmu.edu/pavlo/blog/2023/04/the-part-of-postgresql-we-hate-the-most.html).
+
+## Vectors
+
+I don't have enough energy to dig into AI in this post, but it's clear Fauna missed the boat. Everybody still in the game has access to vector storage and indexing, if not integrations or tooling directly related to connecting those features with AI vendors.
+
+So, speaking of pluggability, you can't miss the need to be flexible enough to adapt and integrate additional solutions like vector storage alongside everything else.
+
+<CalloutDigress>
+  I have a habit of trying to abstract systems to an extreme and build for every
+  possible outcome. It's very useful when troubleshooting and developing tests,
+  but it's problematic at times. I had a great conversation with a friend of
+  mine about building more narrow-purpose applications for very specific
+  audiences. I was picking at an idea around crowdfunding when they pointed me
+  to https://numarket.co/ as an example. There is nothing about the _tech_ that
+  means the app must stay limited to food business, but there is something
+  important about working with a limited scope that lets you focus and solve the
+  problem. So, while I can't help but think about an omni-super-perfect
+  operational database, not _every_ solution needs to solve _every_ problem.
+  Maybe I'll get over it. Maybe not 😮‍💨 I'll continue to talk about this like we
+  can find a perfect solution, with the understanding that anything in reality
+  will be a mixed bag of compromises.
+</CalloutDigress>
+
+## Open source<span class="alt-heading">, or lack thereof</span>
+
+I wasn't there way back in the day, so I can't comment on the call to not open-source Fauna sooner. As someone who interfaced with a lot of customers and potential customers, though, I observed Fauna's closed-source nature as a real barrier to community growth. As Fauna said in the announcement, "Driving broad based adoption of a new operational database that runs as a service globally is very capital intensive." No kidding! Enterprise Sales isn't cheap in its own right, but it was necessary given poor bottom-up adoption. Truly hitting virality with product-led growth was _hard_ for Fauna. Fauna was new, had a new language, a learning curve, and lock-in to a closed-source system.
+
+I can't say that being open-source would have saved Fauna. Probably not 😅. But I will charge that it would have reduced friction for a lot of folks. It probably would have opened up the possibility for faster development on features that were low priority for the company, but _very_ high priority for select customers, like geo-data or vectors. It _definitely_ would have made life easier for folks leaving the hosted service, now that it is closing. Was it the right choice to make in the moment? 🤷
+
+## Conclusion
+
+There's so much to consider and talk about, but I tried to hit on some of the bigger thoughts I have on what I want a modern database needs to deliver. I touched on my history of modeling complex schema and the need for consistent transactions. It's clear that, at some point, SQL as an interface just doesn't cut it, but it's still an open question in my mind how it should be resolved. What I think we need is to focus on architectures that are built inherently for distributed systems, with well-defined interfaces between components to enable scalability and extensibility. Doing so will put a database in a good posture to join the latest hype trains and stay ahead, providing folks with valuable features. And open-source, I think, is critical to ensuring trust and, in turn, adoption. Community insight and contributions cannot be undervalued.

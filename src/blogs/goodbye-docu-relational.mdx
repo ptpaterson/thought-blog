@@ -21,7 +21,7 @@ A couple of weeks ago, Fauna [announced](https://fauna.com/blog/the-future-of-fa
 Fauna certainly isn't perfect, but I can't help but reflect on its unique perspective and what we can learn from it. To that end, I want to take some time to call out things that went well, that I want to see in other offers, and what perhaps could have been better.
 
 <CalloutNote>
-  What I am sharing is what has already been shared publiclyl; for example, in
+  What I am sharing is what has already been shared publicly; for example, in
   the [architectural white
   paper](https://fauna.com/resources/whitepapers/architectural-overview). I hope
   that open-sourcing will shed some additional light on the inner workings.
@@ -82,7 +82,7 @@ As far as I know, nothing using Calvin has gotten as big as Fauna, but doing a q
 
 Now, not everyone needs data replicated across the globe! 😜 But the scalability, availability, and durability granted from being _natively distributed_ is something I saw folks come for time and again. If serverless is, in part, about scaling down to zero, then with Fauna you didn't have to sacrifice multi-regionality to do so. This is no small deal. Many customers came to Fauna after grief they suffered trying to scale within the same platform after choosing whatever small-scale option they started with ("serverless" or not).
 
-## Separating compute from storage<span class="alt-heading">, or branching and time travel</span>
+## Separating compute from storage<span class="alt-heading">, or pluggability, branching and time travel</span>
 
 I was recently reading articles from the folks at Neon about their [architectural decisions](https://neon.tech/blog/architecture-decisions-in-neon) and [separating compute from storage](https://neon.tech/blog/get-page-at-lsn). It had me thinking a lot about what Fauna does and doesn't do to separate things in this way.
 

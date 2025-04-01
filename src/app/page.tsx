@@ -6,8 +6,21 @@ import Time from '@/components/util/time'
 export default async function Home() {
   const posts = await listBlogPosts()
 
+  const latestSortedPosts = posts
+    .filter(
+      (p) =>
+        p.metadata.draft !== true &&
+        p.metadata.date.getTime() < new Date().getTime(),
+    )
+    .sort((a, b) => {
+      return (
+        new Date(b.metadata.date).getTime() -
+        new Date(a.metadata.date).getTime()
+      )
+    })
+
   return (
-    <div className='from-primary/10 via-surface-2 to-primary/10 h-full w-full bg-linear-160 px-6 py-12'>
+    <div className='h-full w-full px-6 py-12'>
       <div className='mx-auto max-w-[1024px] md:px-12'>
         {/* Hero Section */}
         <section className='grid grid-cols-1 items-center gap-8 md:grid-cols-2'>
@@ -42,7 +55,7 @@ export default async function Home() {
             </p>
           </div>
           <div className='grid-col-1 grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-            {posts.map((post) => (
+            {latestSortedPosts.map((post) => (
               <article
                 key={post.slug}
                 className='bg-surface-2 border-border relative isolate rounded-lg border shadow-lg'

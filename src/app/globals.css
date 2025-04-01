@@ -150,7 +150,11 @@
     /* Styling for headers */
     /* underline h2 */
     h2 {
-      border-bottom: 2px solid var(--border);
+      border-bottom: 2px solid var(--secondary);
+
+      .alt-heading {
+        @apply text-muted-foreground;
+      }
     }
 
     /* Apply styling for anchor links */
@@ -188,19 +192,8 @@
       visibility: visible;
     }
 
-    blockquote.callout {
-      p {
-        margin-top: 0.25rem;
-        margin-bottom: 0.25rem;
-
-        &:before {
-          content: none;
-        }
-
-        &:after {
-          content: none;
-        }
-      }
+    li {
+      @apply mt-1 mb-1;
     }
 
     code {
@@ -213,6 +206,12 @@
       &:before {
         content: none;
       }
+    }
+
+    .preramble h2 {
+      font-size: 1.66667em;
+      font-weight: 700;
+      line-height: 1.33333;
     }
 
     [data-rehype-pretty-code-figure] {

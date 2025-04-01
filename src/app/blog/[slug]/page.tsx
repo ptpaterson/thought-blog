@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import type { Metadata } from 'next/types'
 
 import Share from '@/components/share'
-import Tag from '@/components/tag'
+import CategoryBadge from '@/components/category-badge'
 import { getBlogPost, listBlogPosts } from '@/lib/mdx'
 
 type BlogPageProps = { params: Promise<{ slug: string }> }
@@ -24,10 +24,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
     day: 'numeric',
     year: 'numeric',
   }).format(lastUpdated)
-  const tags = metadata.tags ?? []
+  const categories = metadata.categories ?? []
 
   return (
-    <div className='from-primary/10 via-primary/5 to-primary/10 w-full bg-linear-140'>
+    <div className='w-full'>
       <div className='flex flex-col items-center gap-12 py-12'>
         <div className='border-border/80 bg-surface-2 mx-auto w-full max-w-[768px] border shadow-lg md:rounded-lg'>
           {/* <div className='relative h-64 overflow-hidden md:rounded-t-lg'>
@@ -46,13 +46,15 @@ export default async function BlogPage({ params }: BlogPageProps) {
                 <span className='text-muted-foreground text-sm'>
                   last updated {formattedDate}
                 </span>
-                {tags.length > 0 && (
+                {categories.length > 0 && (
                   <>
                     <span className='text-muted-foreground'>|</span>
                     <div className='flex gap-1'>
-                      {tags.map((tag) => (
-                        <Tag key={tag} tag={tag} />
-                      ))}
+                      {categories
+                        .filter((t) => t.toLowerCase() !== 'blog')
+                        .map((category) => (
+                          <CategoryBadge key={category} category={category} />
+                        ))}
                     </div>
                   </>
                 )}
@@ -76,7 +78,7 @@ export async function generateMetadata({
   return {
     title: metadata.title,
     description: metadata.description,
-    keywords: metadata.tags,
+    keywords: metadata.keywords,
     // other...
   }
 }

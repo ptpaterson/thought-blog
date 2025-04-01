@@ -4,14 +4,16 @@ import path from 'node:path'
 import type { Metadata } from 'next/types'
 
 export type BlogPostMetadata = Metadata & {
-  title: string
+  categories: string[]
   description: string
   date: Date
-  updatedDate?: Date
-  banner?: string
-  tags?: string[]
-  beforeSlug?: string
+  keywords: string[]
+  title: string
   afterSlug?: string
+  banner?: string
+  beforeSlug?: string
+  draft?: boolean
+  updatedDate?: Date
 }
 
 export type BlogPostData = {
@@ -36,12 +38,14 @@ export async function listBlogPosts(): Promise<
   )
 }
 
+const REQUIRED_METADATA_FIELDS = ['description', 'date', 'keywords', 'title']
+
 export const getBlogPost = async (slug: string): Promise<BlogPostData> => {
   const post = await import(`@/blogs/${slug}.mdx`)
 
   const { metadata: data } = post
 
-  if (!data.title || !data.description) {
+  if (!REQUIRED_METADATA_FIELDS.every((field) => field in data)) {
     throw new Error(`Missing some required metadata fields in: ${slug}`)
   }
 

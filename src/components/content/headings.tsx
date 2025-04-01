@@ -1,12 +1,25 @@
+import { ReactNode } from 'react'
+
 type Props = {
   children: string
 }
 
-const getAnchor = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, '')
+const getAnchor = (text: string | ReactNode[]) => {
+  // If we're doing something fancy in the heading, then children will be an array of nodes
+  if (Array.isArray(text)) {
+    if (text[0] === null || text[0] === undefined) {
+      throw new Error('Heading cannot be empty')
+    }
+
+    // CAUTION: This assumes that the header starts with plain text and not any other html
+    text = text[0].toString() as string
+  }
+
+  return text
+    .replace(/[^a-z0-9A-Z ]/g, '')
     .replace(/[ ]/g, '-')
+    .toLowerCase()
+}
 
 export const H1 = ({ children }: Props) => {
   const anchor = getAnchor(children)

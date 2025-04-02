@@ -3,6 +3,7 @@ export const metadata = {
   description:
     'Fauna announced the sunsetting of its service. What went well, and what went... maybe not so well?',
   date: '2025-04-01T12:00:00Z',
+  updatedDate: '2025-04-02T07:00:00Z',
   categories: ['Fauna', 'Databases'],
   keywords: ['Fauna', 'Databases', 'FaunaDB', 'document-relational'],
 }
@@ -32,6 +33,31 @@ Fauna certainly isn't perfect, but I can't help but reflect on its unique perspe
   one, have been capturing them into Obsidian notes using a browser plugin:
   https://obsidian.md/clipper
 </CalloutTip>
+
+## Vectors and AI
+
+I don't have enough energy to fully dig into AI in this post, but let's start up front with a quick callout that that **Fauna missed the boat**. Everybody in the game has access to vector storage and indexing, if not integrations or tooling directly related to connecting those features with AI vendors. Here's a list of just the big players:
+
+- [pgvector](https://github.com/pgvector/pgvector) for Aurora, Cockroach, Supabase, Neon, or any self-hosted PostgreSQL
+- Vectors are [built into MySQL](https://dev.mysql.com/doc/refman/9.0/en/vector.html)
+- [MongoDB Vector Search](https://www.mongodb.com/products/platform/atlas-vector-search)
+- [Couchbase Vector Search](https://www.couchbase.com/products/vector-search/)
+- Graph databases like [Neo4j](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/) and [ArangoDB](https://arangodb.com/2024/11/vector-search-in-arangodb-practical-insights-and-hands-on-examples/)
+- You can connect services like [DynamoDB to Amazon OpenSearch](https://aws.amazon.com/blogs/database/vector-search-for-amazon-dynamodb-with-zero-etl-for-amazon-opensearch-service/)
+- [Vector Search in Azure Cosmos DB for NoSQL](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/vector-search)
+- ScyllaDB promises ["forthcoming vector storage and search features."](https://www.scylladb.com/tech-talk/vector-search-with-scylladb/)
+
+I mean, just look at the truly MASSIVE list of vector stores that [LangChain supports](https://python.langchain.com/api_reference/community/vectorstores.html)!
+
+Even Cassandra supports [indexing and searching vectors](https://cassandra.apache.org/doc/latest/cassandra/getting-started/vector-search-quickstart.html) now. Despite Fauna's storage being based on a fork of Cassandra, it seems it diverged to much to keep up with upstream changes this big.
+
+I'll argue that Fauna needed deeper integration with AI to stay relevant (certainly to investors), and... it didn't. Fauna made the bet that an operational database should stick to operational data, that vectors weren't that, and that it was sufficient to hoist a separate solution for vectors (e.g. [Pinecone](https://www.pinecone.io/)) when you need AI integration for your application. Hindsight is 20/20.
+
+I will say, however (and this is important), that you can only focus your limited resources on so many things at once, and Fauna had plenty to work on over the past several years. I do think it was a reasonable call at the time because of that, and I have no intention on beating anybody up over this. We were a small team and I saw everybody busting their butts on everything we worked on. These folks were rockstars 🤩! Even so, it became a non-trivial problem that Fauna lacked deeper support and integration with AI.
+
+Whether or not the AI integration with any of these databases is being used, valued by customers, and is the most efficient solution is probably debatable when you look at things case-by-case, but what's less debatable is that AI is the hype train that investors are on. Working with AI seems to be table-stakes now with any tech venture.
+
+All that said, there's still a _TON_ that was great about Fauna. So having gotten my quick rant out of the way, let's dive into that!
 
 ## "NoSQL" does not mean sacrificing consistency
 
@@ -98,11 +124,7 @@ We know that branching and time travel are useful and important tools for a lot 
 
 One takeaway from this is that careful, intentional separation of concerns can enable the pluggability of different systems. PostgreSQL is awesome for that when you look at the success of something like [pgvector](https://github.com/pgvector/pgvector) but also clearly [lacking when you consider storage](https://www.cs.cmu.edu/pavlo/blog/2023/04/the-part-of-postgresql-we-hate-the-most.html).
 
-## Vectors
-
-I don't have enough energy to dig into AI in this post, but it's clear Fauna missed the boat. Everybody still in the game has access to vector storage and indexing, if not integrations or tooling directly related to connecting those features with AI vendors.
-
-So, speaking of pluggability, you can't miss the need to be flexible enough to adapt and integrate additional solutions like vector storage alongside everything else.
+Remember when I talked about vectors and AI? You can't miss the value of being flexible enough to adapt and integrate additional solutions like vector storage, indexing and search alongside everything else.
 
 <CalloutDigress>
   I have a habit of trying to abstract systems to an extreme and build for every
@@ -114,11 +136,33 @@ So, speaking of pluggability, you can't miss the need to be flexible enough to a
   means the app must stay limited to food business, but there is something
   important about working with a limited scope that lets you focus and solve the
   problem. So, while I can't help but think about an omni-super-perfect
-  operational database, not _every_ solution needs to solve _every_ problem.
-  Maybe I'll get over it. Maybe not 😮‍💨 I'll continue to talk about this like we
-  can find a perfect solution, with the understanding that anything in reality
-  will be a mixed bag of compromises.
+  operational database, I do realize not _every_ solution needs to solve _every_
+  problem. Maybe I'll get over it. Maybe not 😮‍💨 I'll continue to talk about this
+  like we maybe we find a perfect solution, with the understanding that anything
+  in reality will be a mixed bag of compromises.
 </CalloutDigress>
+
+## Authentication
+
+Fauna provides a built-in _Credentials_ collection with special functionality that automatically hashes passwords and generates authentication tokens. Fauna is not opinionated about what a "user" is, which grants developers a lot of flexibility. As always with new and more complex methods, I saw folks struggle with this at times, especially when getting started. The balance between giving developers more powerful tools while increasing learning curve is difficult to land and something for any software as a service to consider carefully.
+
+### Attribute-based Access Controls (ABAC)
+
+ABAC controls access to specific documents by evaluating some logic on the caller and the document first. The combination of flexible auth tokens and FQL enables incredible control over access rules. You can define what is essentially middleware in FQL that runs on each query to determine if a caller has permissions to a specific document.
+
+PostgreSQL calls this [Row-Level Security (RLS)](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
+
+This goes one step further than _Role_-based access controls that some databases are limited to like [MongoDB](https://www.mongodb.com/docs/manual/core/authorization/) or [MySQL](https://dev.mysql.com/doc/refman/8.0/en/grant-tables.html).
+
+I would like to see more control over access with language that's easy to write, understand, maintain. Complex PostgreSQL policies in SQL can quickly get verbose and more difficult to read/understand/maintain.
+
+### Column-level security, or attribute masking
+
+Attribute masking, where some fields are hidden from users without required privileges, is something Fauna does not have. I heard a lot of requests for it, and it _is_ available in a wide range of other databases, either natively (as with MongoDB's [Field-level redaction](https://www.mongodb.com/docs/manual/tutorial/implement-field-level-redaction/)) or with extensions (as with [Anonymizer for PostgreSQL](https://postgresql-anonymizer.readthedocs.io/en/latest/)). Workarounds typically included adding more user-defined functions (AKA stored procedures) to strip away values or to split data across collections with different privileges. I think these are reasonable, but having this baked into the auth system is delightful.
+
+### JSON Web Tokens (JWT)
+
+Fauna added support for JWTs which greatly expanded the ways in which applications could connect. As I understand it, this works kind of like a middleware that verifies the signature on the JWT and hands off a special kind of temporary Token to the query. I can't say how deeply integrated this needed to be in the database itself, but it highlights another example of where built-in extensibility can be key to maintaining and evolving the product.
 
 ## Open source<span class="alt-heading">, or lack thereof</span>
 
@@ -128,4 +172,4 @@ I can't say that being open-source would have saved Fauna. Probably not 😅. Bu
 
 ## Conclusion
 
-There's so much to consider and talk about, but I tried to hit on some of the bigger thoughts I have on what I want a modern database needs to deliver. I touched on my history of modeling complex schema and the need for consistent transactions. It's clear that, at some point, SQL as an interface just doesn't cut it, but it's still an open question in my mind how it should be resolved. What I think we need is to focus on architectures that are built inherently for distributed systems, with well-defined interfaces between components to enable scalability and extensibility. Doing so will put a database in a good posture to join the latest hype trains and stay ahead, providing folks with valuable features. And open-source, I think, is critical to ensuring trust and, in turn, adoption. Community insight and contributions cannot be undervalued.
+There's so much to consider and talk about, but I tried to hit on some of the bigger thoughts I have on what I want a modern database to deliver. It's clear to me that, at some point, SQL as an interface just doesn't cut it, but it's still an open question in my mind how it should be resolved. What I think we need is to focus on architectures that are built inherently for distributed systems, with well-defined interfaces between components to enable scalability and extensibility, including things like integration with AI and other ML applications. Doing so will put a database in a good posture to join the latest hype trains and stay ahead, providing folks with valuable features. And open-source, I think, is critical to ensuring trust and, in turn, adoption. Community insight and contributions cannot be undervalued.

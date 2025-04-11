@@ -79,7 +79,7 @@ export default async function Home() {
                     </h3>
                     <Time
                       className='text-muted-foreground order-first'
-                      date={post.metadata.updatedDate ?? post.metadata.date}
+                      date={post.metadata.date}
                     />
                     <p className='mb-2'>{post.metadata.description}</p>
                     <div aria-hidden='true' className='text-primary mt-auto'>

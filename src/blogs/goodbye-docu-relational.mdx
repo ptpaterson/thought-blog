@@ -36,7 +36,7 @@ Fauna certainly isn't perfect, but I can't help but reflect on its unique perspe
 
 ## Vectors and AI
 
-I don't have enough energy to fully dig into AI in this post, but let's start up front with a quick callout that that **Fauna missed the boat**. Everybody in the game has access to vector storage and indexing, if not integrations or tooling directly related to connecting those features with AI vendors. Here's a list of just the big players:
+I don't have enough energy to fully dig into AI in this post, but let's start up front with a quick callout that **Fauna missed the boat**. Everybody in the game has access to vector storage and indexing, if not integrations or tooling directly related to connecting those features with AI vendors. Here's a list of just the big players:
 
 - [pgvector](https://github.com/pgvector/pgvector) for Aurora, Cockroach, Supabase, Neon, or any self-hosted PostgreSQL
 - Vectors are [built into MySQL](https://dev.mysql.com/doc/refman/9.0/en/vector.html)
@@ -76,11 +76,17 @@ Fauna is still the only solution I have ever found that has let me (so easily) d
 Another important note is that "flexible schema" doesn't need to mean "no schema". I would say it primarily means that it's easy to modify and evolve. To me, it also means supporting complex schemas through composition, inheritance, etc.
 
 <CalloutDigress>
-Have you ever worked with a game engine like Unity or [Bevy](https://bevyengine.org/)? Fauna makes me feel like I am working with an [ECS](https://en.wikipedia.org/wiki/Entity_component_system) in the cloud. Mmmmm... Okay, not _quite_, but the ability to handle dynamic schema gets it close. Maybe a mature column-family store would be a better comparison, but Fauna as an affordable, serverless option was a game changer for me.
-
+Have you ever worked with a game engine like Unity or [Bevy](https://bevyengine.org/)? Fauna makes me feel like I am working with an [ECS](https://en.wikipedia.org/wiki/Entity_component_system) in the cloud.<span>*</span> Mmmmm... Okay, not _quite_, but the ability to handle dynamic schema gets it close. Maybe a mature column-family store would be a better comparison, but Fauna as an affordable, serverless option was a game changer for me.
+<br/>
 Regardless, the archytypal storage in Bevy's ECS is a beautiful thing. Being built in Rust, the Bevy ECS is naturally designed to schedule around systems with immutable reads and mutable writes. There's some absolutely fascinating overlap between the ECS, its dynamic storage, and database systems. It's something I have an outline to research further!
 
 </CalloutDigress>
+
+<CalloutTip>
+<span>*</span> UPDATE 2025-04-11
+
+I spoke too soon about "ECS in the cloud". I just learned today that title actually exists and belongs to [SpacetimeDB](https://spacetimedb.com). If you are interested in a transactional, relational, multiplayer/collaborative computing service, then you need to check this out!
+</CalloutTip>
 
 ### On the "execution-transparent, procedural interface"
 
